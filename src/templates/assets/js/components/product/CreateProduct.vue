@@ -177,9 +177,16 @@ export default {
       }, []);
       return ans;
     },
-
-    // store product into database
+    // store product in database
     saveProduct() {
+      const csrfToken = getCookie('csrftoken');
+      console.log(csrfToken)
+      const config = {
+        headers: {
+            'content-type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        }
+      }
       let product = {
         title: this.product_name,
         sku: this.product_sku,
@@ -188,9 +195,10 @@ export default {
         product_variant: this.product_variant,
         product_variant_prices: this.product_variant_prices
       }
+      console.log(product);
 
 
-      axios.post('/product', product).then(response => {
+      axios.post('/product/api/create/', product,config).then(response => {
         console.log(response.data);
       }).catch(error => {
         console.log(error);
@@ -204,5 +212,21 @@ export default {
   mounted() {
     console.log('Component mounted.')
   }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 </script>
